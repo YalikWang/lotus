@@ -1,0 +1,5 @@
+<beans>
+	<Bean name="Teacher" class="com.lotus.test.pojo.ChineseTeacher"></Bean>
+	<Bean name="SimpleLogger" class="com.lotus.test.SimpleLogger">
+	</Bean>
+</beans>
