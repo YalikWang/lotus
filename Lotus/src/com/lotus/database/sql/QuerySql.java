@@ -11,7 +11,7 @@ import com.lotus.orm.Filter;
 import com.lotus.orm.Mapper;
 import com.lotus.orm.Selector;
 
-public abstract class QuerySql {
+public abstract class QuerySql extends Sql {
 	/**
 	 * 查询语句的字段重命名关系记录，比如select name as username form user;
 	 * 此时需要将name和username对应关系记录下来，以便于对查询结果进行解析
@@ -19,7 +19,6 @@ public abstract class QuerySql {
 	 */
 	protected Map<String, String> fieldMap = new HashMap<>();
 	protected Mapper mapper;
-	protected Object[] params;
 	protected Selector selectors;
 	protected Filter filter;
 
@@ -59,7 +58,7 @@ public abstract class QuerySql {
 		mainSql.append(translateFilter(filter));
 		return mainSql.toString();
 	}
-	
+
 	public Object[] getParams() {
 		return new Object[] { filter.getValue() };
 	}

@@ -32,7 +32,7 @@ public class BeanMapper implements Mapper {
 	@Override
 	public Property getProperty(String propertyName) {
 		for (Property p : properties) {
-			if (p.getEntityName().equals(propertyName)) {
+			if (p.getName().equals(propertyName)) {
 				return p;
 			}
 		}

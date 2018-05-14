@@ -9,27 +9,33 @@ import java.util.Map;
 import com.lotus.database.annotation.Column;
 import com.lotus.database.annotation.ColumnIgnore;
 import com.lotus.database.annotation.Entity;
+import com.lotus.model.BeanProperty;
 import com.lotus.model.Property;
 
 public class AnnotationMapperContext extends MapperContext {
-	
+
 	public Mapper getMapper(Class<?> clazz) {
-		if(!clazz.isAnnotationPresent(Entity.class)) {
+		if (!clazz.isAnnotationPresent(Entity.class)) {
 			throw new RuntimeException(String.format("类【%s】未配置Entity注解，无法进行字段映射解析", clazz.getName()));
 		}
 		Entity entityConfig = clazz.getAnnotation(Entity.class);
 		String entityName = entityConfig.name();
-		if(Entity.DEFAULT_ENTITY_NAME.equalsIgnoreCase(entityName)) {
+		if (Entity.DEFAULT_ENTITY_NAME.equalsIgnoreCase(entityName)) {
 			entityName = clazz.getSimpleName().toLowerCase();
 		}
 		return this.getMapper(entityName);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T createEntity(String entity) {
 		BeanMapper mapper = getMapper(entity);
-		return (T) mapper.getClazz().getSimpleName();
+		Class<?> clazz = mapper.getClazz();
+		try {
+			return (T) clazz.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -72,9 +78,12 @@ public class AnnotationMapperContext extends MapperContext {
 		Field.setAccessible(fields, true);
 		List<Property> properties = new ArrayList<>();
 		for (Field f : fields) {
+			// 先设置Property的基本信息，但是注意该Property不一定有对应数据库字段
+			BeanProperty property = new BeanProperty();
+			property.setField(f);
+			property.setType(f.getType());
 			if (f.isAnnotationPresent(Column.class)) {
 				// 如果配置了Column注解，则以注解为准
-				Property property = new Property();
 				property.setEntityName(entityName);
 				property.setName(f.getName());
 				Column column = f.getAnnotation(Column.class);
@@ -83,17 +92,14 @@ public class AnnotationMapperContext extends MapperContext {
 					dbName = f.getName();
 				}
 				property.setDbName(dbName);
-				property.setType(f.getType());
 				properties.add(property);
 			} else {
 				// 没有配置Column注解的情况下,实体配置按照自动规则映射且字段上没有配置ColumnIgnore注解
 				if (isDefaultColumn) {
 					if (!f.isAnnotationPresent(ColumnIgnore.class)) {
-						Property property = new Property();
 						property.setEntityName(entityName);
 						property.setName(f.getName());
 						property.setDbName(f.getName());
-						property.setType(f.getType());
 						properties.add(property);
 					}
 				}
@@ -101,6 +107,4 @@ public class AnnotationMapperContext extends MapperContext {
 		}
 		return properties;
 	}
-
-
 }

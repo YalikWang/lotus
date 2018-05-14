@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lotus.model.BeanProperty;
 import com.lotus.model.Property;
 import com.lotus.orm.AnnotationMapperContext;
 import com.lotus.orm.Filter;
@@ -34,28 +35,29 @@ public class BeanQuerySql extends QuerySql {
 				Field[] fields = entityInstance.getClass().getFields();
 				Field.setAccessible(fields, true);
 				// 为字段设值
-				for (int i = 0; i < columnCount; i++) {
+				for (int i = 1; i <= columnCount; i++) {
 					Object columnValue = rs.getObject(i);
 					String columnName = metaData.getColumnName(i);
 					String dbFieldName = this.fieldMap.get(columnName);
 					boolean match = false;
 					for (Property p : allProperties) {
 						if (p.getDbName().equals(dbFieldName)) {
-							Field field = entityInstance.getClass().getField(p.getName());
+							BeanProperty bp = (BeanProperty) p;
+							Field field = bp.getField();
 							field.set(entityInstance, columnValue);
 							match = true;
 							break;
 						}
 					}
 					if (!match) {
-						throw new RuntimeException("实体【"+mapper.getEntityName()+"】中不存在【"+dbFieldName+"】对应的字段");
+						throw new RuntimeException("实体【" + mapper.getEntityName() + "】中不存在【" + dbFieldName + "】对应的字段");
 					}
 				}
 				result.add(entityInstance);
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} catch (NoSuchFieldException | SecurityException e) {
+		} catch (SecurityException e) {
 			throw new RuntimeException(e);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);

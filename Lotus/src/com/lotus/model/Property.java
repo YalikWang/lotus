@@ -1,4 +1,7 @@
 package com.lotus.model;
+
+import java.lang.reflect.Field;
+
 /**
  * 属性
  * @author yalik_wang
