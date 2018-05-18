@@ -7,16 +7,16 @@ package com.lotus.transaction;
 public class MutiDatabaseTransaction implements Transaction {
 
 	@Override
+	public void begin() {
+
+	}
+
+	@Override
 	public void commit() {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
-	public void commit(String point) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void rollback() {
@@ -30,7 +30,6 @@ public class MutiDatabaseTransaction implements Transaction {
 
 	}
 
-	@Override
 	public void end() {
 		// TODO Auto-generated method stub
 		

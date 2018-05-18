@@ -4,13 +4,11 @@ public interface Transaction {
 	
 	public static final ThreadLocal<TransactionContext> CONTEXT_HOLDER = new ThreadLocal<>();
 
-	void commit();
+	void begin();
 
-	void commit(String point);
+	void commit();
 
 	void rollback();
 
 	void rollback(String point);
-	
-	void end();
 }

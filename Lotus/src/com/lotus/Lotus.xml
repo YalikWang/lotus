@@ -1,5 +1,20 @@
-<beans>
-	<Bean name="Teacher" class="com.lotus.test.pojo.ChineseTeacher"></Bean>
-	<Bean name="SimpleLogger" class="com.lotus.test.SimpleLogger">
-	</Bean>
-</beans>
+<configs>
+    <beans>
+        <Bean name="Teacher" class="com.lotus.test.pojo.ChineseTeacher"></Bean>
+        <Bean name="SimpleLogger" class="com.lotus.test.SimpleLogger">
+        </Bean>
+    </beans>
+    <properties>
+        <databasesetting>
+            <driver>com.mysql.jdbc.Driver</driver>
+            <host>localhost</host>
+            <port>3306</port>
+            <database>lotus</database>
+            <serverTimezone>GMT%2B8</serverTimezone>
+            <useUnicode>true</useUnicode>
+            <characterEncoding>UTF-8</characterEncoding>
+            <user>root</user>
+            <password>root</password>
+        </databasesetting>
+    </properties>
+</configs>
